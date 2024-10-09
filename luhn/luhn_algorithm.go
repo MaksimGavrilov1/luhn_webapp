@@ -1,6 +1,7 @@
 package luhn
 
 import (
+	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
@@ -48,4 +49,13 @@ func Validate(cardValue string) (bool, error) {
 		}
 	}
 	return sum%10 == 0, nil
+}
+
+func Generate() string {
+	var sArr []string
+	for len(sArr) < 16 {
+		i := rand.Intn(10)
+		sArr = append(sArr, strconv.Itoa(i))
+	}
+	return strings.Join(sArr, emptyString)
 }
