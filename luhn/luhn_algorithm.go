@@ -1,29 +1,34 @@
 package luhn
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-type WrongCardFormatError struct{}
-type InternalError struct{}
+type wrongCardFormatError struct{}
+type internalError struct{}
 
-func (w *WrongCardFormatError) Error() string {
+const (
+	emptyString = ""
+	digitRegex  = "^[\\d]{16}$"
+	whiteSpace  = " "
+)
+
+func (w *wrongCardFormatError) Error() string {
 	return "Your card have wrong format"
 }
 
-func (i *InternalError) Error() string {
+func (i *internalError) Error() string {
 	return "Something went wrong on our side"
 }
 
 func Validate(cardValue string) (bool, error) {
-	cardValue = strings.ReplaceAll(cardValue, " ", "")
-	if matched, _ := regexp.MatchString("^[\\d]{16}$", cardValue); !matched {
-		return false, &WrongCardFormatError{}
+	cardValue = strings.ReplaceAll(cardValue, whiteSpace, emptyString)
+	if matched, _ := regexp.MatchString(digitRegex, cardValue); !matched {
+		return false, &wrongCardFormatError{}
 	}
-	sArr := strings.Split(cardValue, "")
+	sArr := strings.Split(cardValue, emptyString)
 	var iElem, sum int
 	var err error
 	for index, elem := range sArr {
@@ -42,6 +47,5 @@ func Validate(cardValue string) (bool, error) {
 			sum += iElem
 		}
 	}
-	fmt.Println(sum)
 	return sum%10 == 0, nil
 }
